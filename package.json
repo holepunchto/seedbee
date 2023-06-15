@@ -1,0 +1,31 @@
+{
+  "name": "seedbee",
+  "version": "0.0.0",
+  "description": "Bee for seeds",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && brittle test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/holepunchto/seedbee.git"
+  },
+  "author": "Lucas Barrena (LuKks)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/holepunchto/seedbee/issues"
+  },
+  "homepage": "https://github.com/holepunchto/seedbee#readme",
+  "dependencies": {
+    "compact-encoding": "^2.12.0",
+    "hyperbee": "^2.13.1",
+    "hypercore-id-encoding": "^1.1.0",
+    "ready-resource": "^1.0.0"
+  },
+  "devDependencies": {
+    "brittle": "^3.1.3",
+    "hypercore": "^10.15.1",
+    "random-access-memory": "^6.2.0",
+    "standard": "^17.0.0"
+  }
+}
