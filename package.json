@@ -1,6 +1,6 @@
 {
   "name": "seedbee",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Bee for seeds",
   "main": "index.js",
   "scripts": {
