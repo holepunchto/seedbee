@@ -28,7 +28,8 @@ module.exports = class SeedBee extends ReadyResource {
     return this.bee.put(key, {
       type: opts.type,
       description: opts.description || '',
-      seeders: !!opts.seeders
+      seeders: !!opts.seeders,
+      peers: opts.peers || []
     }, { cas })
   }
 
@@ -59,5 +60,10 @@ function cas (prev, next) {
   if (prev.value.type !== next.value.type) return true
   if (prev.value.description !== next.value.description) return true
   if (prev.value.seeders !== next.value.seeders) return true
+  if (stringifyPeers(prev.value.peers) !== stringifyPeers(next.value.peers)) return true
   return false
+}
+
+function stringifyPeers (peers) {
+  return peers.map(key => key.toString('hex')).join(',')
 }

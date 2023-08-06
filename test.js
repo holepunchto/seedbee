@@ -19,7 +19,8 @@ test('basic', async function (t) {
   t.alike(await seed.get(K), {
     type: 'core',
     description: '',
-    seeders: false
+    seeders: false,
+    peers: []
   })
 
   let entry = null
@@ -34,7 +35,8 @@ test('basic', async function (t) {
     value: {
       type: 'core',
       description: '',
-      seeders: false
+      seeders: false,
+      peers: []
     }
   })
 
@@ -43,12 +45,33 @@ test('basic', async function (t) {
   t.alike(await seed.get(K), {
     type: 'core',
     description: 'Some text',
-    seeders: false
+    seeders: false,
+    peers: []
   })
 
   await seed.del(K)
 
   t.is(await seed.get(K), null)
+
+  await seed.close()
+})
+
+test('basic', async function (t) {
+  t.plan(1)
+
+  const seed = new SeedBee(new Hypercore(RAM))
+
+  await seed.put(K, {
+    type: 'core',
+    peers: [Buffer.alloc(32).fill('a')]
+  })
+
+  t.alike(await seed.get(K), {
+    type: 'core',
+    description: '',
+    seeders: false,
+    peers: [Buffer.alloc(32).fill('a')]
+  })
 
   await seed.close()
 })
@@ -117,6 +140,20 @@ test('invalid encoding values', async function (t) {
     await seed.put(K, { type: 'core', description: 123 })
   } catch (err) {
     t.is(err.code, 'ERR_INVALID_ARG_TYPE') // CompactEncoding error
+  }
+
+  await seed.close()
+})
+
+test('invalid peer', async function (t) {
+  t.plan(1)
+
+  const seed = new SeedBee(new Hypercore(RAM))
+
+  try {
+    await seed.put(K, { type: 'core', peers: [Buffer.alloc(40).fill('a')] })
+  } catch (err) {
+    t.is(err.message, 'offset is out of bounds') // Buffer/CompactEncoding error
   }
 
   await seed.close()
