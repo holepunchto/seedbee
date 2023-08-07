@@ -1,6 +1,7 @@
 const Id = require('hypercore-id-encoding')
 const Hyperbee = require('hyperbee')
 const ReadyResource = require('ready-resource')
+const b4a = require('b4a')
 const { keyEncoding, valueEncoding } = require('./encoding.js')
 
 const types = ['core', 'bee', 'drive']
@@ -10,7 +11,9 @@ module.exports = class SeedBee extends ReadyResource {
     super()
 
     this.core = core
-    this.bee = new Hyperbee(core, { keyEncoding, valueEncoding })
+    this.bee = new Hyperbee(core)
+    this.content = this.bee.sub(b4a.from([0]), { keyEncoding, valueEncoding })
+    this.metadata = this.bee.sub(b4a.from([1]), { keyEncoding: 'utf-8', valueEncoding: 'utf-8' })
   }
 
   _open () {
@@ -21,11 +24,20 @@ module.exports = class SeedBee extends ReadyResource {
     return this.bee.close()
   }
 
+  putProperty (key, value) {
+    return this.metadata.put(key, value)
+  }
+
+  async getProperty (key) {
+    const entry = await this.metadata.get(key)
+    return entry ? entry.value : null
+  }
+
   async put (key, opts = {}) {
     key = Id.decode(key)
     if (types.indexOf(opts.type) === -1) throw new Error('Invalid type: ' + opts.type)
 
-    return this.bee.put(key, {
+    return this.content.put(key, {
       type: opts.type,
       description: opts.description || '',
       seeders: !!opts.seeders
@@ -38,17 +50,17 @@ module.exports = class SeedBee extends ReadyResource {
 
   async get (key, opts) {
     key = Id.decode(key)
-    const entry = await this.bee.get(key, opts)
+    const entry = await this.content.get(key, opts)
     return entry ? entry.value : null
   }
 
   async del (key) {
     key = Id.decode(key)
-    return this.bee.del(key) // TODO: cas?
+    return this.content.del(key) // TODO: cas?
   }
 
   async * entries (opts = {}) {
-    for await (const e of this.bee.createReadStream()) {
+    for await (const e of this.content.createReadStream()) {
       if (opts.type && opts.type !== e.value.type) continue
       yield e
     }

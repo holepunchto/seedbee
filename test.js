@@ -7,12 +7,14 @@ const Id = require('hypercore-id-encoding')
 const K = 'fbh6h7j9xgpsqeyke9rtzbcyowwobxfozhr3ukz9x64kf9zok41o'
 
 test('basic', async function (t) {
-  t.plan(6)
+  t.plan(8)
 
   const seed = new SeedBee(new Hypercore(RAM))
 
   t.ok(seed.core)
   t.ok(seed.bee)
+  t.ok(seed.content)
+  t.ok(seed.metadata)
 
   await seed.put(K, { type: 'core' })
 
@@ -118,6 +120,30 @@ test('invalid encoding values', async function (t) {
   } catch (err) {
     t.is(err.code, 'ERR_INVALID_ARG_TYPE') // CompactEncoding error
   }
+
+  await seed.close()
+})
+
+test('put/get metadata', async function (t) {
+  t.plan(1)
+
+  const seed = new SeedBee(new Hypercore(RAM))
+  const key = 'allowed-peers'
+  const value = '*'
+
+  await seed.putProperty(key, value)
+  t.is(value, await seed.getProperty(key))
+
+  await seed.close()
+})
+
+test('get empty metadata', async function (t) {
+  t.plan(1)
+
+  const seed = new SeedBee(new Hypercore(RAM))
+  const key = 'allowed-peers'
+
+  t.is(null, await seed.getProperty(key))
 
   await seed.close()
 })

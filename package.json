@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/holepunchto/seedbee#readme",
   "dependencies": {
+    "b4a": "^1.6.4",
     "compact-encoding": "^2.12.0",
     "hyperbee": "^2.13.1",
     "hypercore-id-encoding": "^1.1.0",
