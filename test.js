@@ -7,14 +7,12 @@ const Id = require('hypercore-id-encoding')
 const K = 'fbh6h7j9xgpsqeyke9rtzbcyowwobxfozhr3ukz9x64kf9zok41o'
 
 test('basic', async function (t) {
-  t.plan(8)
+  t.plan(6)
 
   const seed = new SeedBee(new Hypercore(RAM))
 
   t.ok(seed.core)
   t.ok(seed.bee)
-  t.ok(seed.content)
-  t.ok(seed.metadata)
 
   await seed.put(K, { type: 'core' })
 

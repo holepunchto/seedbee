@@ -3,8 +3,13 @@ const Hyperbee = require('hyperbee')
 const ReadyResource = require('ready-resource')
 const b4a = require('b4a')
 const { keyEncoding, valueEncoding } = require('./encoding.js')
+const SubEncoder = require('sub-encoder')
 
 const types = ['core', 'bee', 'drive']
+
+const enc = new SubEncoder()
+const content = enc.sub(b4a.from([0]), { keyEncoding })
+const metadata = enc.sub(b4a.from([1]), { keyEncoding: 'utf-8' })
 
 module.exports = class SeedBee extends ReadyResource {
   constructor (core) {
@@ -12,8 +17,6 @@ module.exports = class SeedBee extends ReadyResource {
 
     this.core = core
     this.bee = new Hyperbee(core)
-    this.content = this.bee.sub(b4a.from([0]), { keyEncoding, valueEncoding })
-    this.metadata = this.bee.sub(b4a.from([1]), { keyEncoding: 'utf-8', valueEncoding: 'utf-8' })
   }
 
   _open () {
@@ -25,11 +28,11 @@ module.exports = class SeedBee extends ReadyResource {
   }
 
   putProperty (key, value) {
-    return this.metadata.put(key, value)
+    return this.bee.put(key, value, { keyEncoding: metadata, valueEncoding: 'uft-8' })
   }
 
   async getProperty (key) {
-    const entry = await this.metadata.get(key)
+    const entry = await this.bee.get(key, { keyEncoding: metadata, valueEncoding: 'utf-8' })
     return entry ? entry.value : null
   }
 
@@ -37,11 +40,11 @@ module.exports = class SeedBee extends ReadyResource {
     key = Id.decode(key)
     if (types.indexOf(opts.type) === -1) throw new Error('Invalid type: ' + opts.type)
 
-    return this.content.put(key, {
+    return this.bee.put(key, {
       type: opts.type,
       description: opts.description || '',
       seeders: !!opts.seeders
-    }, { cas })
+    }, { keyEncoding: content, valueEncoding, cas })
   }
 
   async edit (prev, opts = {}) {
@@ -50,17 +53,17 @@ module.exports = class SeedBee extends ReadyResource {
 
   async get (key, opts) {
     key = Id.decode(key)
-    const entry = await this.content.get(key, opts)
+    const entry = await this.bee.get(key, { keyEncoding: content, valueEncoding, ...opts })
     return entry ? entry.value : null
   }
 
   async del (key) {
     key = Id.decode(key)
-    return this.content.del(key) // TODO: cas?
+    return this.bee.del(key, { keyEncoding: content }) // TODO: cas?
   }
 
   async * entries (opts = {}) {
-    for await (const e of this.content.createReadStream()) {
+    for await (const e of this.bee.createReadStream({ keyEncoding: content, valueEncoding, ...opts })) {
       if (opts.type && opts.type !== e.value.type) continue
       yield e
     }
