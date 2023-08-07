@@ -1,8 +1,8 @@
 const c = require('compact-encoding')
 
-const keyEncoding = c.fixed32
+const contentKeyEncoding = c.fixed32
 
-const valueEncoding = {
+const contentValueEncoding = {
   preencode (state, v) {
     c.string.preencode(state, v.type)
     c.string.preencode(state, v.description)
@@ -22,4 +22,4 @@ const valueEncoding = {
   }
 }
 
-module.exports = { keyEncoding, valueEncoding }
+module.exports = { contentKeyEncoding, contentValueEncoding }

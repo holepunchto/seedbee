@@ -88,6 +88,21 @@ Available `options`:
 }
 ```
 
+### `await seed.putProperty(key, value)`
+
+Add a new Seedbee metadata value.
+
+``` js
+const key = SeedBee.ALLOWED_PEERS_METADATA_KEY
+const value = '*'
+await seed.putProperty(key, value)
+```
+
+### `await seed.getProperty(key)`
+
+Read a Seedbee metadata value.
+
+
 ## License
 
 Apache-2.0

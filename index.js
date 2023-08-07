@@ -2,13 +2,13 @@ const Id = require('hypercore-id-encoding')
 const Hyperbee = require('hyperbee')
 const ReadyResource = require('ready-resource')
 const b4a = require('b4a')
-const { keyEncoding, valueEncoding } = require('./encoding.js')
+const { contentKeyEncoding, contentValueEncoding } = require('./encoding.js')
 const SubEncoder = require('sub-encoder')
 
 const types = ['core', 'bee', 'drive']
 
 const enc = new SubEncoder()
-const content = enc.sub(b4a.from([0]), { keyEncoding })
+const content = enc.sub(b4a.from([0]), { keyEncoding: contentKeyEncoding })
 const metadata = enc.sub(b4a.from([1]), { keyEncoding: 'utf-8' })
 
 module.exports = class SeedBee extends ReadyResource {
@@ -18,6 +18,8 @@ module.exports = class SeedBee extends ReadyResource {
     this.core = core
     this.bee = new Hyperbee(core)
   }
+
+  static ALLOWED_PEERS_METADATA_KEY = 'allowed-peers'
 
   _open () {
     return this.bee.ready()
@@ -44,7 +46,7 @@ module.exports = class SeedBee extends ReadyResource {
       type: opts.type,
       description: opts.description || '',
       seeders: !!opts.seeders
-    }, { keyEncoding: content, valueEncoding, cas })
+    }, { keyEncoding: content, valueEncoding: contentValueEncoding, cas })
   }
 
   async edit (prev, opts = {}) {
@@ -53,7 +55,7 @@ module.exports = class SeedBee extends ReadyResource {
 
   async get (key, opts) {
     key = Id.decode(key)
-    const entry = await this.bee.get(key, { keyEncoding: content, valueEncoding, ...opts })
+    const entry = await this.bee.get(key, { keyEncoding: content, valueEncoding: contentValueEncoding, ...opts })
     return entry ? entry.value : null
   }
 
@@ -63,7 +65,7 @@ module.exports = class SeedBee extends ReadyResource {
   }
 
   async * entries (opts = {}) {
-    for await (const e of this.bee.createReadStream({ keyEncoding: content, valueEncoding, ...opts })) {
+    for await (const e of this.bee.createReadStream({ keyEncoding: content, valueEncoding: contentValueEncoding, ...opts })) {
       if (opts.type && opts.type !== e.value.type) continue
       yield e
     }
