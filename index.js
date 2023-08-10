@@ -13,8 +13,6 @@ module.exports = class SeedBee extends ReadyResource {
     this.bee = new Hyperbee(core)
   }
 
-  static ALLOWED_PEERS_METADATA_KEY = 'allowed-peers'
-
   _open () {
     return this.bee.ready()
   }

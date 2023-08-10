@@ -31,6 +31,6 @@ module.exports = {
   },
   metadataEncoding: {
     keyEncoding: enc.sub(b4a.from([1]), { keyEncoding: 'utf-8' }),
-    valueEncoding: 'utf-8'
+    valueEncoding: c.any
   }
 }

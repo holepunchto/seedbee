@@ -126,7 +126,7 @@ test('put/get metadata', async function (t) {
   t.plan(1)
 
   const seed = new SeedBee(new Hypercore(RAM))
-  const key = SeedBee.ALLOWED_PEERS_METADATA_KEY
+  const key = 'key'
   const value = '*'
 
   await seed.putProperty(key, value)
@@ -139,7 +139,7 @@ test('get empty metadata', async function (t) {
   t.plan(1)
 
   const seed = new SeedBee(new Hypercore(RAM))
-  const key = SeedBee.ALLOWED_PEERS_METADATA_KEY
+  const key = 'key'
 
   t.is(null, await seed.getProperty(key))
 
