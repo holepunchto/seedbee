@@ -93,9 +93,9 @@ Available `options`:
 Add a new Seedbee metadata value.
 
 ``` js
-const key = SeedBee.ALLOWED_PEERS_METADATA_KEY
+const key = 'key'
 const value = '*'
-await seed.putProperty(key, value)
+await seed.metadata.put(key, value)
 ```
 
 ### `await seed.metadata.get(key)`
