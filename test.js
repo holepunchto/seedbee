@@ -122,15 +122,18 @@ test('invalid encoding values', async function (t) {
   await seed.close()
 })
 
-test('put/get metadata', async function (t) {
-  t.plan(1)
+test('put/get/del metadata', async function (t) {
+  t.plan(2)
 
   const seed = new SeedBee(new Hypercore(RAM))
   const key = 'key'
   const value = '*'
 
-  await seed.putProperty(key, value)
-  t.is(value, await seed.getProperty(key))
+  await seed.metadata.put(key, value)
+  t.is(value, await seed.metadata.get(key))
+
+  await seed.metadata.del(key)
+  t.is(null, await seed.metadata.get(key))
 
   await seed.close()
 })
@@ -141,7 +144,7 @@ test('get empty metadata', async function (t) {
   const seed = new SeedBee(new Hypercore(RAM))
   const key = 'key'
 
-  t.is(null, await seed.getProperty(key))
+  t.is(null, await seed.metadata.get(key))
 
   await seed.close()
 })

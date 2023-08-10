@@ -11,6 +11,7 @@ module.exports = class SeedBee extends ReadyResource {
 
     this.core = core
     this.bee = new Hyperbee(core)
+    this.metadata = new Metadata(this.bee)
   }
 
   _open () {
@@ -19,15 +20,6 @@ module.exports = class SeedBee extends ReadyResource {
 
   _close () {
     return this.bee.close()
-  }
-
-  putProperty (key, value) {
-    return this.bee.put(key, value, metadataEncoding)
-  }
-
-  async getProperty (key) {
-    const entry = await this.bee.get(key, metadataEncoding)
-    return entry ? entry.value : null
   }
 
   async put (key, opts = {}) {
@@ -61,6 +53,25 @@ module.exports = class SeedBee extends ReadyResource {
       if (opts.type && opts.type !== e.value.type) continue
       yield e
     }
+  }
+}
+
+class Metadata {
+  constructor (bee) {
+    this.bee = bee
+  }
+
+  put (key, value) {
+    return this.bee.put(key, value, metadataEncoding)
+  }
+
+  del (key) {
+    return this.bee.del(key, metadataEncoding)
+  }
+
+  async get (key) {
+    const entry = await this.bee.get(key, metadataEncoding)
+    return entry ? entry.value : null
   }
 }
 
