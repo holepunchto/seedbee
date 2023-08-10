@@ -39,7 +39,7 @@ module.exports = class SeedBee extends ReadyResource {
 
   async get (key, opts) {
     key = Id.decode(key)
-    const entry = await this.bee.get(key, { ...contentEncoding, ...opts })
+    const entry = await this.bee.get(key, { ...opts, ...contentEncoding })
     return entry ? entry.value : null
   }
 
@@ -49,7 +49,7 @@ module.exports = class SeedBee extends ReadyResource {
   }
 
   async * entries (opts = {}) {
-    for await (const e of this.bee.createReadStream({ ...contentEncoding, ...opts })) {
+    for await (const e of this.bee.createReadStream({ ...opts, ...contentEncoding })) {
       if (opts.type && opts.type !== e.value.type) continue
       yield e
     }
