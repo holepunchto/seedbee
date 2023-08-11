@@ -49,7 +49,7 @@ module.exports = class SeedBee extends ReadyResource {
   }
 
   async * entries (opts = {}) {
-    for await (const e of this.bee.createReadStream({ ...opts, ...contentEncoding })) {
+    for await (const e of this.bee.createReadStream(contentEncoding)) {
       if (opts.type && opts.type !== e.value.type) continue
       yield e
     }
