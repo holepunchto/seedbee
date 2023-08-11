@@ -1,8 +1,10 @@
+const SubEncoder = require('sub-encoder')
 const c = require('compact-encoding')
+const b4a = require('b4a')
 
-const keyEncoding = c.fixed32
+const enc = new SubEncoder()
 
-const valueEncoding = {
+const contentValueEncoding = {
   preencode (state, v) {
     c.string.preencode(state, v.type)
     c.string.preencode(state, v.description)
@@ -22,4 +24,13 @@ const valueEncoding = {
   }
 }
 
-module.exports = { keyEncoding, valueEncoding }
+module.exports = {
+  contentEncoding: {
+    keyEncoding: enc.sub(b4a.from([0]), { keyEncoding: c.fixed32 }),
+    valueEncoding: contentValueEncoding
+  },
+  metadataEncoding: {
+    keyEncoding: enc.sub(b4a.from([1]), { keyEncoding: 'utf-8' }),
+    valueEncoding: c.any
+  }
+}

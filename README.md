@@ -88,6 +88,24 @@ Available `options`:
 }
 ```
 
+### `await seed.metadata.put(key, value)`
+
+Add a new Seedbee metadata value.
+
+``` js
+const key = 'key'
+const value = '*'
+await seed.metadata.put(key, value)
+```
+
+### `const value = await seed.metadata.get(key)`
+
+Read a Seedbee metadata value.
+
+### `await seed.metadata.del(key)`
+
+Delete a Seedbee metadata value.
+
 ## License
 
 Apache-2.0
