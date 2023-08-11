@@ -98,7 +98,7 @@ const value = '*'
 await seed.metadata.put(key, value)
 ```
 
-### `await seed.metadata.get(key)`
+### `const value = await seed.metadata.get(key)`
 
 Read a Seedbee metadata value.
 
