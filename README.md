@@ -106,7 +106,6 @@ Read a Seedbee metadata value.
 
 Delete a Seedbee metadata value.
 
-
 ## License
 
 Apache-2.0
